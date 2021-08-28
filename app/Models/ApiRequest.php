@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ class ApiRequest extends Model
     use HasFactory;
 
     public const MAX_GUEST_REQ_PER_HOUR = 5;
+    public const MAX_IDENTICAL_REQ = 3;
 
     protected $fillable = [
         'ip',
@@ -50,5 +52,27 @@ class ApiRequest extends Model
     public static function isGuestRequestPerHourExceeded(): bool
     {
         return self::countGuestRequestInHour() >= self::MAX_GUEST_REQ_PER_HOUR;
+    }
+
+    private static function countIdenticalRequest(): int
+    {
+        $requests = self::when(
+            auth()->check(),
+            function (Builder $query) {
+                $query->where('user_id', auth()->id());
+            },
+            function (Builder $query) {
+                $query->where('ip', request()->ip());
+            }
+        )->latest()->take(3)->get();
+
+        return $requests
+            ->where('query', request('location', ''))
+            ->count();
+    }
+
+    public static function isMaxIdenticalRequestExceeded(): bool
+    {
+        return self::countIdenticalRequest() >= self::MAX_IDENTICAL_REQ;
     }
 }

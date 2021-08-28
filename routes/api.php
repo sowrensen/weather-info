@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\ThrottleGuestUser;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\WeatherController;
+use App\Http\Middleware\ThrottleIdenticalRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,12 +21,14 @@ use App\Http\Controllers\Api\WeatherController;
 // Public routes
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::get('weather', WeatherController::class)->middleware(ThrottleGuestUser::class);
+Route::get('weather', WeatherController::class)
+    ->middleware([ThrottleGuestUser::class, ThrottleIdenticalRequest::class]);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('weather', WeatherController::class);
+    Route::post('weather', WeatherController::class)
+        ->middleware(ThrottleIdenticalRequest::class);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

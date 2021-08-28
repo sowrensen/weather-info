@@ -7,7 +7,7 @@ use App\Models\ApiRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class ThrottleGuestUser
+class ThrottleIdenticalRequest
 {
     /**
      * Handle an incoming request.
@@ -18,12 +18,12 @@ class ThrottleGuestUser
      */
     public function handle(Request $request, Closure $next)
     {
-        if (ApiRequest::isGuestRequestPerHourExceeded()) {
+        if (ApiRequest::isMaxIdenticalRequestExceeded()) {
             return \Response::json([
                 'status' => false,
-                'message' => 'Please register yourself to avoid rate limiting.',
+                'message' => 'Too many identical requests.',
                 'data' => null
-            ], Response::HTTP_FORBIDDEN);
+            ], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
         return $next($request);
