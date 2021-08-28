@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\ApiRequest;
 use App\Services\WeatherService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -15,10 +16,12 @@ class WeatherController extends Controller
             'location' => 'required|string'
         ]);
 
+        ApiRequest::recordRequest($request->get('location'));
+
         try {
             $response = $service->getWeather($request->get('location'));
 
-            if (! $response['success']) {
+            if (isset($response['success']) && ! $response['success']) {
                 throw new \Exception($response['error']['info'] ?? "Invalid request");
             }
 
