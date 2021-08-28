@@ -30,4 +30,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'weather_stack' => [
+        'key' => env('WEATHER_STACK_KEY'),
+    ],
+
 ];
