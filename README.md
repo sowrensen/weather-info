@@ -42,7 +42,7 @@ Response:
 
 ```json
 {
-  "success": true,
+  "status": true,
   "message": "Registered successfully.",
   "data": {
     "user": {
@@ -69,7 +69,7 @@ Response:
 
 ```json
 {
-  "success": true,
+  "status": true,
   "message:": "Successfully logged in.",
   "data": {
     "token": "4|9DjcACwXBmN3FiB1GYzQEoKcxw9MTfngfpLRhV7G"
@@ -83,7 +83,7 @@ Response:
 
 ```json
 {
-  "success": true,
+  "status": true,
   "message": "Successfully logged out.",
   "data": null
 }
